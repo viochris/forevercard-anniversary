@@ -1,0 +1,8 @@
+{
+  "name": "ForeverCard — 1-Year Anniversary Celebration Card",
+  "description": "A romantic, interactive 1-year anniversary celebration card with 365 days memory timeline, playful moments, love quiz, and keepsake letter.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
