@@ -30,7 +30,7 @@ export const AnniversarySelfieModal: React.FC<AnniversarySelfieModalProps> = ({
 
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
-  const [caption, setCaption] = useState<string>('1-Year Anniversary selfie with my favorite person! 📸💖');
+  const [caption, setCaption] = useState<string>('1 Year Anniversary selfie with my favorite person! 📸💖');
   const [countdown, setCountdown] = useState<number | null>(null);
   const [isCapturing, setIsCapturing] = useState<boolean>(false);
   const [facingMode, setFacingMode] = useState<'user' | 'environment'>('user');

@@ -73,6 +73,40 @@
   animation: pulseGlow 2.5s ease-in-out infinite;
 }
 
+@keyframes wiggle {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+
+.animate-wiggle {
+  animation: wiggle 0.4s ease-in-out;
+}
+
+/* Floating Hearts Animation for Sharing */
+@keyframes floatUpHeart {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(0.6) rotate(0deg);
+  }
+  35% {
+    opacity: 0.95;
+    transform: translateY(-60px) translateX(var(--drift-x, 15px)) scale(1.15) rotate(12deg);
+  }
+  70% {
+    opacity: 0.8;
+    transform: translateY(-130px) translateX(calc(var(--drift-x, 15px) * -1)) scale(1.25) rotate(-10deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-220px) translateX(var(--drift-x, 15px)) scale(1.4) rotate(18deg);
+  }
+}
+
+.animate-float-heart {
+  animation: floatUpHeart 2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
 /* Dedicated Print Styles for Keepsake Letter */
 @media print {
   body * {

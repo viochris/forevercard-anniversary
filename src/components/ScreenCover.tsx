@@ -1,7 +1,6 @@
 import React from 'react';
 import { Mail, Sparkles, Heart } from 'lucide-react';
 import { CardData } from '../types';
-import { AnniversaryCounter } from './AnniversaryCounter';
 
 interface ScreenCoverProps {
   cardData: CardData;
@@ -36,17 +35,10 @@ export const ScreenCover: React.FC<ScreenCoverProps> = ({ cardData, onOpen }) =>
           </p>
 
           {/* Recipient tag pill */}
-          <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-rose-50 border border-rose-200/70 text-rose-700 text-sm font-semibold mb-6 shadow-xs">
+          <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-rose-50 border border-rose-200/70 text-rose-700 text-sm font-semibold mb-8 shadow-xs">
             <Sparkles className="w-3.5 h-3.5 text-amber-500 fill-amber-400" />
             <span>Celebrating 1 Year with {cardData.recipientName}</span>
           </div>
-
-          {/* Elegant 1-Year Anniversary Counter & Badge */}
-          <AnniversaryCounter
-            recipientName={cardData.recipientName}
-            daysTogether={cardData.daysTogether || 365}
-            anniversaryDate={cardData.anniversaryDate}
-          />
 
           {/* Open Button with pulse / glow effect */}
           <div>

@@ -24,7 +24,7 @@ export const ScreenQuestion: React.FC<ScreenQuestionProps> = ({
     'Think again! 😜',
     'Too slow! 🏃‍♂️',
     'Nice try! ✨',
-    'Error 404: No not found 💫',
+    'Oops, No was not found 💫',
     'Can’t touch this! 🎶',
     'Just press Yes! 🥰',
   ],

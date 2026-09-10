@@ -123,7 +123,7 @@ export const ScreenLetter: React.FC<ScreenLetterProps> = ({
       <div className="flex flex-wrap items-center justify-between gap-2 mb-4 px-2">
         <div className="flex items-center gap-2 text-xs font-semibold text-stone-500">
           <Palette className="w-4 h-4 text-rose-500" />
-          <span className="hidden sm:inline">Stationery Theme:</span>
+          <span className="hidden sm:inline">Stationery Theme</span>
         </div>
         <div className="flex items-center gap-1.5 bg-white/80 backdrop-blur-md p-1 rounded-2xl border border-stone-200/80 shadow-xs">
           {PAPER_THEMES.slice(0, 3).map((theme) => {

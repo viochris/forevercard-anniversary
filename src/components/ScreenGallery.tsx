@@ -1,9 +1,19 @@
 import React, { useState } from 'react';
-import { Sparkles, Calendar, MapPin, ChevronRight, X, Heart, Camera, SlidersHorizontal, CloudRain } from 'lucide-react';
+import { Sparkles, Calendar, MapPin, ChevronRight, X, Heart, Camera, SlidersHorizontal, CloudRain, Share2, Check, MessageCircle } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { PhotoItem, MilestoneItem } from '../types';
 import { AnniversarySelfieModal, PHOTO_FILTERS, PhotoFilterType } from './AnniversarySelfieModal';
 import { romanticAudio } from '../utils/audio';
+
+interface FloatingHeartItem {
+  id: number;
+  x: number;
+  y: number;
+  size: number;
+  color: string;
+  rotation: number;
+  drift: number;
+}
 
 interface ScreenGalleryProps {
   galleryTitle?: string;
@@ -18,8 +28,8 @@ interface ScreenGalleryProps {
 
 export const ScreenGallery: React.FC<ScreenGalleryProps> = ({
   galleryTitle = 'Our Journey This Past Year 📸',
-  gallerySubtitle = 'From that first shy hello to 365 days by your side—every chapter has been pure magic.',
-  galleryContinueButtonText = 'Next: Our 1-Year Quiz 💖',
+  gallerySubtitle = 'From that first shy hello to 365 days by your side, every chapter has been pure magic.',
+  galleryContinueButtonText = 'Continue to Our 1 Year Quiz 💖',
   daysTogether = 365,
   photos,
   milestones,
@@ -29,6 +39,96 @@ export const ScreenGallery: React.FC<ScreenGalleryProps> = ({
   const [selectedPhoto, setSelectedPhoto] = useState<PhotoItem | null>(null);
   const [activeMilestoneId, setActiveMilestoneId] = useState<number | null>(null);
   const [isCameraModalOpen, setIsCameraModalOpen] = useState<boolean>(false);
+  const [isCopied, setIsCopied] = useState<boolean>(false);
+  const [floatingHearts, setFloatingHearts] = useState<FloatingHeartItem[]>([]);
+
+  // Trigger floating heart animation bursting from button click position
+  const triggerFloatingHearts = (clientX?: number, clientY?: number) => {
+    const heartColors = ['#f43f5e', '#fb7185', '#ec4899', '#f472b6', '#e11d48', '#fda4af'];
+    const count = 16;
+    const now = Date.now();
+    const originX = clientX ?? window.innerWidth / 2;
+    const originY = clientY ?? window.innerHeight / 2;
+
+    const newHearts: FloatingHeartItem[] = [];
+    for (let i = 0; i < count; i++) {
+      const offsetX = (Math.random() - 0.5) * 160;
+      const offsetY = (Math.random() - 0.5) * 40;
+      newHearts.push({
+        id: now + i,
+        x: Math.max(20, Math.min(window.innerWidth - 40, originX + offsetX)),
+        y: originY + offsetY,
+        size: Math.floor(Math.random() * 16) + 20,
+        color: heartColors[Math.floor(Math.random() * heartColors.length)],
+        rotation: Math.floor(Math.random() * 60) - 30,
+        drift: Math.floor(Math.random() * 40) - 20,
+      });
+    }
+
+    setFloatingHearts((prev) => [...prev, ...newHearts]);
+
+    setTimeout(() => {
+      setFloatingHearts((prev) => prev.filter((h) => !newHearts.some((nh) => nh.id === h.id)));
+    }, 2100);
+  };
+
+  // Share card via Web Share API or Clipboard with floating hearts
+  const handleShareCard = async (e: React.MouseEvent) => {
+    romanticAudio.playButtonClick();
+    triggerFloatingHearts(e.clientX, e.clientY);
+    const url = window.location.href;
+
+    const shareData = {
+      title: 'Happy 1 Year Anniversary ❤️',
+      text: 'Spesial 1 tahun perjalanan cinta kita berdua, buka kartu anniversary kita ya sayang 💕',
+      url,
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+        setIsCopied(true);
+        romanticAudio.playConfettiPop();
+        setTimeout(() => setIsCopied(false), 2800);
+        return;
+      } catch (err: any) {
+        if (err.name === 'AbortError') return;
+      }
+    }
+
+    // Fallback: Copy to clipboard
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(url);
+      } else {
+        const textArea = document.createElement('textarea');
+        textArea.value = url;
+        textArea.style.position = 'fixed';
+        textArea.style.opacity = '0';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+      }
+      setIsCopied(true);
+      romanticAudio.playConfettiPop();
+      setTimeout(() => setIsCopied(false), 2800);
+    } catch {
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2800);
+    }
+  };
+
+  // Direct WhatsApp Share
+  const handleShareWhatsApp = (e: React.MouseEvent) => {
+    romanticAudio.playButtonClick();
+    triggerFloatingHearts(e.clientX, e.clientY);
+    romanticAudio.playConfettiPop();
+    const url = window.location.href;
+    const text = `Spesial 1 tahun perjalanan cinta kita berdua, buka kartu anniversary kita ya sayang 💕\n${url}`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+  };
 
   // Intense Confetti Rain animation when tapping any polaroid photo
   const triggerIntenseConfettiRain = () => {
@@ -118,13 +218,31 @@ export const ScreenGallery: React.FC<ScreenGalleryProps> = ({
           <div>
             <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-rose-600 flex items-center gap-1.5">
               <Heart className="w-4 h-4 fill-rose-500 text-rose-500 animate-pulse" />
-              Our 1-Year Journey &bull; {milestones.length} Defining Milestones
+              Perjalanan 1 Tahun Kita &bull; {milestones.length} Momen Bersejarah
             </span>
             <p className="text-[11px] text-stone-500 mt-0.5">
               Tap any milestone to filter our memories, or view all photos below
             </p>
           </div>
           <div className="flex items-center gap-2">
+            <button
+              id="gallery-share-card-button"
+              onClick={handleShareCard}
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white hover:bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold shadow-xs hover:shadow-md transition-all cursor-pointer"
+              title="Salin Link Kartu Anniversary"
+            >
+              {isCopied ? (
+                <>
+                  <Check className="w-3.5 h-3.5 text-emerald-600" />
+                  <span className="text-emerald-700 font-bold">Link Tersalin! 💌</span>
+                </>
+              ) : (
+                <>
+                  <Share2 className="w-3.5 h-3.5 text-rose-500" />
+                  <span>Bagikan Kartu 💌</span>
+                </>
+              )}
+            </button>
             <button
               id="gallery-take-selfie-top-button"
               onClick={() => setIsCameraModalOpen(true)}
@@ -187,7 +305,7 @@ export const ScreenGallery: React.FC<ScreenGalleryProps> = ({
         {/* Selected Milestone Callout */}
         {activeMilestoneId && (
           <div className="mt-4 pt-3 border-t border-rose-100 text-xs sm:text-sm text-stone-700 text-center font-medium bg-rose-50/50 rounded-xl p-2.5">
-            ✨ <span className="font-semibold text-rose-600">{milestones.find((m) => m.id === activeMilestoneId)?.title}:</span> {milestones.find((m) => m.id === activeMilestoneId)?.description}
+            ✨ <span className="font-semibold text-rose-600">{milestones.find((m) => m.id === activeMilestoneId)?.title},</span> {milestones.find((m) => m.id === activeMilestoneId)?.description}
           </div>
         )}
       </div>
@@ -288,8 +406,35 @@ export const ScreenGallery: React.FC<ScreenGalleryProps> = ({
         </div>
       </div>
 
-      {/* Continue Button (PRD: "There's one more thing for you...") */}
-      <div className="text-center pb-8">
+      {/* Bottom Action Area: Share via WhatsApp, Share/Copy Card Link, & Continue */}
+      <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3.5 pb-8">
+        <button
+          id="gallery-bottom-whatsapp-button"
+          onClick={handleShareWhatsApp}
+          className="group inline-flex items-center gap-2 px-6 py-3.5 rounded-full font-bold text-sm sm:text-base text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer"
+        >
+          <MessageCircle className="w-4 h-4 text-emerald-600 group-hover:scale-110 transition-transform" />
+          <span>Kirim via WhatsApp 💬</span>
+        </button>
+
+        <button
+          id="gallery-bottom-share-card-button"
+          onClick={handleShareCard}
+          className="group inline-flex items-center gap-2 px-6 py-3.5 rounded-full font-bold text-sm sm:text-base text-rose-700 bg-white hover:bg-rose-50 border border-rose-200 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer"
+        >
+          {isCopied ? (
+            <>
+              <Check className="w-4 h-4 text-emerald-600" />
+              <span className="text-emerald-700 font-bold">Link Kartu Tersalin! 💌</span>
+            </>
+          ) : (
+            <>
+              <Share2 className="w-4 h-4 text-rose-500 group-hover:scale-110 transition-transform" />
+              <span>Salin Link Kartu 💌</span>
+            </>
+          )}
+        </button>
+
         <button
           id="gallery-continue-button"
           onClick={() => {
@@ -415,6 +560,32 @@ export const ScreenGallery: React.FC<ScreenGalleryProps> = ({
         onClose={() => setIsCameraModalOpen(false)}
         onAddSelfie={onAddPhoto}
       />
+
+      {/* Floating Hearts Animation Effect on Share */}
+      <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden">
+        {floatingHearts.map((heart) => (
+          <div
+            key={heart.id}
+            className="absolute animate-float-heart pointer-events-none"
+            style={{
+              left: `${heart.x}px`,
+              top: `${heart.y}px`,
+              ['--drift-x' as any]: `${heart.drift}px`,
+            }}
+          >
+            <Heart
+              style={{
+                width: `${heart.size}px`,
+                height: `${heart.size}px`,
+                color: heart.color,
+                fill: heart.color,
+                filter: 'drop-shadow(0 2px 10px rgba(244, 63, 94, 0.45))',
+                transform: `rotate(${heart.rotation}deg)`,
+              }}
+            />
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

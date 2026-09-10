@@ -33,7 +33,10 @@ export interface QuizQuestion {
   id: number;
   question: string;
   options: string[];
-  reaction: string;
+  correctIndex?: number;
+  reaction?: string;
+  correctExplanation?: string;
+  wrongExplanation?: string;
   emoji: string;
 }
 
