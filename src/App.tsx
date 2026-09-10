@@ -57,6 +57,15 @@ export default function App() {
     }));
   };
 
+  const handleUpdateCaption = (photoId: number, newCaption: string) => {
+    setCardData((prev) => ({
+      ...prev,
+      photos: prev.photos.map((photo) =>
+        photo.id === photoId ? { ...photo, caption: newCaption } : photo
+      ),
+    }));
+  };
+
   const handleFinishQuiz = () => {
     romanticAudio.playButtonClick();
     romanticAudio.playTransitionWhoosh();
@@ -159,6 +168,7 @@ export default function App() {
                 milestones={cardData.milestones}
                 onContinue={handleContinueToQuiz}
                 onAddPhoto={handleAddPhoto}
+                onUpdateCaption={handleUpdateCaption}
               />
             </motion.div>
           )}

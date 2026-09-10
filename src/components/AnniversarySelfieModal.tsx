@@ -179,7 +179,7 @@ export const AnniversarySelfieModal: React.FC<AnniversarySelfieModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-fade-in">
       <div className="relative bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl border border-rose-100 flex flex-col items-center animate-in zoom-in-95 duration-200 overflow-hidden">
         {/* Modal Header */}
         <div className="w-full flex items-center justify-between pb-3 mb-4 border-b border-rose-100">
